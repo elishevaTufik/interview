@@ -10,6 +10,11 @@ app.use(express.json());
 
 const UNSPLASH_ACCESS_KEY = process.env.UNSPLASH_ACCESS_KEY; // Store API key in .env
 
+// Initial grid state (random red or blue)
+let grid = Array.from({ length: 3 }, () =>
+    Array.from({ length: 3 }, () => (Math.random() < 0.5 ? "red" : "blue"))
+);
+
 // Search and pagination endpoint
 app.get('/screen/1', (req, res) => {
     let { search, page = 1, limit = 20 } = req.query;
@@ -67,9 +72,39 @@ app.get('/screen/2', async (req, res) => {
     }
 });
 
+// API to get initial grid state
+app.get("/screen/3/grid", (req, res) => {
+    res.json({ grid });
+});
 
-app.get('/screen/3', (req, res) => {
-    res.json({ content: "This is screen 3" });
+// API to update grid when a square is clicked
+app.post("/screen/3/grid", (req, res) => {
+    const { row, col } = req.body;
+
+    if (row < 0 || row >= 3 || col < 0 || col >= 3) {
+        return res.status(400).json({ message: "Invalid grid coordinates" });
+    }
+
+    const clickedColor = grid[row][col];
+    const newColor = clickedColor === "red" ? "blue" : "red";
+
+    // Function to toggle a cell's color
+    const toggleCell = (r, c) => {
+        if (r >= 0 && r < 3 && c >= 0 && c < 3) {
+            grid[r][c] = newColor;
+        }
+    };
+
+    // Toggle the clicked cell
+    toggleCell(row, col);
+
+    // Toggle adjacent cells with the opposite color
+    if (row > 0 && grid[row - 1][col] !== clickedColor) toggleCell(row - 1, col);
+    if (row < 2 && grid[row + 1][col] !== clickedColor) toggleCell(row + 1, col);
+    if (col > 0 && grid[row][col - 1] !== clickedColor) toggleCell(row, col - 1);
+    if (col < 2 && grid[row][col + 1] !== clickedColor) toggleCell(row, col + 1);
+
+    res.json({ grid });
 });
 
 

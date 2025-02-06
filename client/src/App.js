@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Screen1 from "./Conponents/Screen1";
 import Screen2 from "./Conponents/Screen2";
+import Screen3 from "./Conponents/Screen3";
 
 function App() {
     const [currentScreen, setCurrentScreen] = useState("screen1");
@@ -21,7 +22,7 @@ function App() {
             <div style={{ flex: 1, padding: "20px" }}>
                 {currentScreen === "screen1" && <Screen1 />}
                 {currentScreen === "screen2" && <Screen2 />}
-                {currentScreen === "screen3" && <h2>This is Screen 3</h2>}
+                {currentScreen === "screen3" && <Screen3 />}
             </div>
         </div>
     );
