@@ -1,55 +1,25 @@
 const express = require('express');
 const cors = require('cors');
+
 const app = express();
-const port = 3000;
+const port = 7072
 
-app.use(cors()); // Allow requests from different origins
+app.use(cors());
+app.use(express.json());
 
-app.use(express.json()); // Middleware to parse JSON
-
-let items = []; // Sample in-memory data store
-
-// Get all items
-app.get('/items', (req, res) => {
-    res.json(items);
+// API endpoints for screens
+app.get('/screen/1', (req, res) => {
+    res.json({ content: "This is screen 1" });
 });
 
-// Get a single item by ID
-app.get('/items/:id', (req, res) => {
-    const item = items.find(i => i.id === parseInt(req.params.id));
-    if (!item) return res.status(404).json({ message: 'Item not found' });
-    res.json(item);
+app.get('/screen/2', (req, res) => {
+    res.json({ content: "This is screen 2" });
 });
 
-// Create a new item
-app.post('/items', (req, res) => {
-    const newItem = {
-        id: items.length + 1,
-        name: req.body.name
-    };
-    items.push(newItem);
-    res.status(201).json(newItem);
+app.get('/screen/3', (req, res) => {
+    res.json({ content: "This is screen 3" });
 });
 
-// Update an item
-app.put('/items/:id', (req, res) => {
-    const item = items.find(i => i.id === parseInt(req.params.id));
-    if (!item) return res.status(404).json({ message: 'Item not found' });
-
-    item.name = req.body.name;
-    res.json(item);
-});
-
-// Delete an item
-app.delete('/items/:id', (req, res) => {
-    const index = items.findIndex(i => i.id === parseInt(req.params.id));
-    if (index === -1) return res.status(404).json({ message: 'Item not found' });
-
-    items.splice(index, 1);
-    res.status(204).send();
-});
-
-// Start server
 app.listen(port, () => {
     console.log(`Server running on http://localhost:${port}`);
 });

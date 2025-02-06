@@ -1,66 +1,48 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import axios from "axios";
 
-const API_URL = "http://localhost:3000/items"; // URL of your Express server
+const API_BASE_URL = "http://localhost:7072/screen"; // Base URL for API
 
 function App() {
-    const [items, setItems] = useState([]);
-    const [newItem, setNewItem] = useState("");
+    const [content, setContent] = useState("Click a link to load content");
 
-    // Fetch items from the API
-    useEffect(() => {
-        axios.get(API_URL)
-            .then(response => setItems(response.data))
+    // Function to fetch screen content
+    const fetchContent = (screenId) => {
+        axios.get(`${API_BASE_URL}/${screenId}`)
+            .then(response => setContent(response.data.content))
             .catch(error => console.error("Error fetching data:", error));
-    }, []);
-
-    // Handle adding a new item
-    const addItem = () => {
-        if (!newItem) return;
-        
-        axios.post(API_URL, { name: newItem })
-            .then(response => {
-                setItems([...items, response.data]); // Update state with new item
-                setNewItem(""); // Clear input
-            })
-            .catch(error => console.error("Error adding item:", error));
-    };
-
-    // Handle deleting an item
-    const deleteItem = (id) => {
-        axios.delete(`${API_URL}/${id}`)
-            .then(() => {
-                setItems(items.filter(item => item.id !== id)); // Remove from state
-            })
-            .catch(error => console.error("Error deleting item:", error));
     };
 
     return (
-        <div style={{ padding: "20px", fontFamily: "Arial, sans-serif" }}>
-            <h1>Item List</h1>
-
-            {/* Input and Add Button */}
-            <div>
-                <input
-                    type="text"
-                    value={newItem}
-                    onChange={(e) => setNewItem(e.target.value)}
-                    placeholder="Enter item name"
-                />
-                <button onClick={addItem}>Add Item</button>
+        <div style={{ display: "flex", height: "100vh" }}>
+            {/* Sidebar */}
+            <div style={{ width: "200px", background: "#333", color: "white", padding: "20px" }}>
+                <h3>Menu</h3>
+                <ul style={{ listStyle: "none", padding: 0 }}>
+                    <li><button style={buttonStyle} onClick={() => fetchContent(1)}>Screen 1</button></li>
+                    <li><button style={buttonStyle} onClick={() => fetchContent(2)}>Screen 2</button></li>
+                    <li><button style={buttonStyle} onClick={() => fetchContent(3)}>Screen 3</button></li>
+                </ul>
             </div>
 
-            {/* List of Items */}
-            <ul>
-                {items.map(item => (
-                    <li key={item.id}>
-                        {item.name}
-                        <button onClick={() => deleteItem(item.id)}>Delete</button>
-                    </li>
-                ))}
-            </ul>
+            {/* Content Area */}
+            <div style={{ flex: 1, padding: "20px" }}>
+                <h2>Content Area</h2>
+                <p>{content}</p>
+            </div>
         </div>
     );
 }
+
+// Styling for buttons
+const buttonStyle = {
+    width: "100%",
+    padding: "10px",
+    margin: "5px 0",
+    border: "none",
+    background: "#555",
+    color: "white",
+    cursor: "pointer"
+};
 
 export default App;
