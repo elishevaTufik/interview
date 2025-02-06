@@ -1,17 +1,8 @@
 import React, { useState } from "react";
-import axios from "axios";
-
-const API_BASE_URL = "http://localhost:7072/screen"; // Base URL for API
+import Screen1 from "./Conponents/Screen1";
 
 function App() {
-    const [content, setContent] = useState("Click a link to load content");
-
-    // Function to fetch screen content
-    const fetchContent = (screenId) => {
-        axios.get(`${API_BASE_URL}/${screenId}`)
-            .then(response => setContent(response.data.content))
-            .catch(error => console.error("Error fetching data:", error));
-    };
+    const [currentScreen, setCurrentScreen] = useState("screen1");
 
     return (
         <div style={{ display: "flex", height: "100vh" }}>
@@ -19,16 +10,17 @@ function App() {
             <div style={{ width: "200px", background: "#333", color: "white", padding: "20px" }}>
                 <h3>Menu</h3>
                 <ul style={{ listStyle: "none", padding: 0 }}>
-                    <li><button style={buttonStyle} onClick={() => fetchContent(1)}>Screen 1</button></li>
-                    <li><button style={buttonStyle} onClick={() => fetchContent(2)}>Screen 2</button></li>
-                    <li><button style={buttonStyle} onClick={() => fetchContent(3)}>Screen 3</button></li>
+                    <li><button style={buttonStyle} onClick={() => setCurrentScreen("screen1")}>Screen 1</button></li>
+                    <li><button style={buttonStyle} onClick={() => setCurrentScreen("screen2")}>Screen 2</button></li>
+                    <li><button style={buttonStyle} onClick={() => setCurrentScreen("screen3")}>Screen 3</button></li>
                 </ul>
             </div>
 
             {/* Content Area */}
             <div style={{ flex: 1, padding: "20px" }}>
-                <h2>Content Area</h2>
-                <p>{content}</p>
+                {currentScreen === "screen1" && <Screen1 />}
+                {currentScreen === "screen2" && <h2>This is Screen 2</h2>}
+                {currentScreen === "screen3" && <h2>This is Screen 3</h2>}
             </div>
         </div>
     );
